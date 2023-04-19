@@ -1,23 +1,31 @@
-﻿using Core.Entities;
+﻿using BusinessLogic.Data;
+using Core.Entities;
 using Core.Interfaces;
-using System;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BusinessLogic.Logic
 {
     public class ProductRepository : IProductRepository
     {
-        public Task<Product> GetProductByIdAsync(int id)
+        private readonly MarketDbContext _context;
+        public ProductRepository(MarketDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+        }
+        public async Task<Product> GetProductByIdAsync(int id)
+        {
+            return await _context.Products
+                .Include(tm => tm.TraderMark)
+                .Include(c => c.Category).FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public Task<IReadOnlyList<Product>> GetProductsAsync()
+        public async Task<IReadOnlyList<Product>> GetProductsAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Products
+                .Include(tm => tm.TraderMark)
+                .Include(c => c.Category).ToListAsync();
         }
     }
 }
