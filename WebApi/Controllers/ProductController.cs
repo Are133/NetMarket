@@ -11,24 +11,24 @@ namespace WebApi.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IProductRepository _productRepository;
+        private readonly IGenericRepository<Product> _genericRepository;
 
-        public ProductController(IProductRepository productRepository)
+        public ProductController(IGenericRepository<Product> genericProductRepository)
         {
-            _productRepository = productRepository; 
+            _genericRepository = genericProductRepository; 
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
-            var products = await _productRepository.GetProductsAsync();
+            var products = await _genericRepository.GetAllAsync();
             return Ok(products);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            return await _productRepository.GetProductByIdAsync(id);
+            return await _genericRepository.GetByIdAsync(id);
         }
     }
 }
