@@ -1,6 +1,7 @@
 ﻿using BusinessLogic.Logic;
 using Core.Entities;
 using Core.Interfaces;
+using Core.Specifications;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,14 +22,17 @@ namespace WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
-            var products = await _genericRepository.GetAllAsync();
+            var specification = new ProductWithCategoryAndTraderMarkSpecification();
+            var products = await _genericRepository.GetAllWithSpecificationAsync(specification);
             return Ok(products);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            return await _genericRepository.GetByIdAsync(id);
+            var specification = new ProductWithCategoryAndTraderMarkSpecification(id);
+
+            return await _genericRepository.GetByIdWithSpecificationAsync(specification);
         }
     }
 }
