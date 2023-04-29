@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CategoryController : ControllerBase
+    public class CategoryController : BaseAPIController
     {
         private readonly IGenericRepository<Category> _genericRepository;
 

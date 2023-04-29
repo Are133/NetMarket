@@ -8,9 +8,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TraderMarkController : ControllerBase
+    public class TraderMarkController : BaseAPIController
     {
         private readonly IGenericRepository<TraderMark> _genericRepository;
 
