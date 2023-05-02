@@ -12,6 +12,16 @@ namespace BusinessLogic.Data
             if (specification.Criteria is not null)
                 inputQuery = inputQuery.Where(specification.Criteria);
 
+            if(specification.OrderBy is not null)
+            {
+                inputQuery = inputQuery.OrderBy(specification.OrderBy);
+            }
+
+            if (specification.OrderByDescedending is not null)
+            {
+                inputQuery = inputQuery.OrderByDescending(specification.OrderByDescedending);
+            }
+
             inputQuery = specification.Includes.Aggregate(inputQuery, (current, include) =>
             current.Include(include));
 
