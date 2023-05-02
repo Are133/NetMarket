@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BusinessLogic.Logic;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
@@ -19,14 +18,14 @@ namespace WebApi.Controllers
         public ProductController(IGenericRepository<Product> genericProductRepository,
             IMapper mapper)
         {
-            _genericRepository = genericProductRepository; 
-            _mapper = mapper;   
+            _genericRepository = genericProductRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProducts(string sort)
+        public async Task<ActionResult<List<Product>>> GetProducts(string sort, int? traderMark, int? category)
         {
-            var specification = new ProductWithCategoryAndTraderMarkSpecification(sort);
+            var specification = new ProductWithCategoryAndTraderMarkSpecification(sort, traderMark, category);
             var products = await _genericRepository.GetAllWithSpecificationAsync(specification);
             return Ok(_mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductDTO>>(products));
         }
@@ -37,7 +36,7 @@ namespace WebApi.Controllers
             var specification = new ProductWithCategoryAndTraderMarkSpecification(id);
             var product = await _genericRepository.GetByIdWithSpecificationAsync(specification);
 
-            if(product is null)
+            if (product is null)
             {
                 return NotFound(new CodeErrorResponse(404));
             }

@@ -4,11 +4,12 @@ namespace Core.Specifications
 {
     public class ProductWithCategoryAndTraderMarkSpecification : BaseSpecification<Product>
     {
-        public ProductWithCategoryAndTraderMarkSpecification(string sort)
+        public ProductWithCategoryAndTraderMarkSpecification(string sort, int? traderMark, int? category)
+            :base(x => (!traderMark.HasValue || x.TraderMarkId == traderMark)
+            && (!category.HasValue || x.TraderMarkId == category))
         {
             AddInclude(p => p.Category);
             AddInclude(p => p.TraderMark);
-            //AddOrderBy(p => p.Name);
 
             if (!string.IsNullOrEmpty(sort))
             {
