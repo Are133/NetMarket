@@ -21,5 +21,7 @@ namespace Core.Specifications
             get => _PageSize;
             set => _PageSize = (value > MaxPageSize) ? MaxPageSize : value;
         }
+
+        public string Search { get; set; }
     }
 }
