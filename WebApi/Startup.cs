@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using WebApi.DTOs;
 using WebApi.Middleware;
 
@@ -34,6 +33,16 @@ namespace WebApi
             });
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddControllers();
+
+            services.AddCors(cfg =>
+            {
+                cfg.AddPolicy("CorsRule", rule =>
+                {
+                    rule.AllowAnyHeader().AllowAnyHeader().WithOrigins("*");
+                });
+
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +57,8 @@ namespace WebApi
             app.UseStatusCodePagesWithReExecute("/errors", "?statusCode={0}");
 
             app.UseRouting();
+
+            app.UseCors("CorsRule");
 
             app.UseAuthorization();
 
