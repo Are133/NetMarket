@@ -1,19 +1,21 @@
 ﻿using Core.Entities;
+using Core.Entities.Enums;
 
 namespace Core.Specifications
 {
     public class ProductWithCategoryAndTraderMarkSpecification : BaseSpecification<Product>
     {
-        public ProductWithCategoryAndTraderMarkSpecification(string sort, int? traderMark, int? category)
-            :base(x => (!traderMark.HasValue || x.TraderMarkId == traderMark)
-            && (!category.HasValue || x.TraderMarkId == category))
+        public ProductWithCategoryAndTraderMarkSpecification(ProductSpecificationParams @params)
+            : base(x => (!@params.TraderMark.HasValue || x.TraderMarkId == @params.TraderMark)
+            && (!@params.Category.HasValue || x.TraderMarkId == @params.Category))
         {
             AddInclude(p => p.Category);
             AddInclude(p => p.TraderMark);
+            ApplyPaging(@params.PageSize * (@params.PageIndex - (int)NetMarketEnums.DataPageEnum.DefaultPage), @params.PageSize);
 
-            if (!string.IsNullOrEmpty(sort))
+            if (!string.IsNullOrEmpty(@params.Sort))
             {
-                switch (sort)
+                switch (@params.Sort)
                 {
                     case "nameAsc":
                         AddOrderBy(p => p.Name);
