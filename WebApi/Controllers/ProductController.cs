@@ -3,6 +3,7 @@ using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApi.DTOs;
@@ -23,11 +24,26 @@ namespace WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Product>>> GetProducts(string sort, int? traderMark, int? category)
+        public async Task<ActionResult<Pagination<ProductDTO>>> GetProducts([FromQuery] ProductSpecificationParams @params)
         {
-            var specification = new ProductWithCategoryAndTraderMarkSpecification(sort, traderMark, category);
+            var specification = new ProductWithCategoryAndTraderMarkSpecification(@params);
             var products = await _genericRepository.GetAllWithSpecificationAsync(specification);
-            return Ok(_mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductDTO>>(products));
+
+            var specCount = new ProductForCountingSpecification(@params);
+            var totalProducts = await _genericRepository.CountAsync(specification);
+
+            var rounded = Math.Ceiling(Convert.ToDecimal(totalProducts / @params.PageSize));
+            var totalPages = Convert.ToInt32(rounded);
+            var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductDTO>>(products);
+
+            return Ok(new Pagination<ProductDTO>
+            {
+                Count = totalProducts,
+                Data = data,
+                PageCount = totalPages,
+                PageIndex = @params.PageIndex,
+                PageSize = @params.PageSize
+            });
         }
 
         [HttpGet("{id}")]
